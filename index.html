@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clash Verge / v2ray 快速导入</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f4;
+      --paper: #ffffff;
+      --ink: #161a18;
+      --muted: #656d68;
+      --line: #dfe5de;
+      --soft: #edf2ec;
+      --accent: #197f58;
+      --accent-dark: #0f5e40;
+      --blue: #2458b8;
+      --blue-soft: #eaf0ff;
+      --warn: #8a5b13;
+      --warn-soft: #fff5da;
+      --danger: #b0442d;
+      --danger-soft: #fff0eb;
+      --shadow: 0 22px 60px rgba(18, 30, 25, 0.09);
+      --radius: 8px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(246,247,244,0.98) 38%), var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 24px;
+      align-items: end;
+      padding: 24px 0 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 740px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 0.98;
+      letter-spacing: 0;
+      text-wrap: pretty;
+    }
+
+    .hero p {
+      margin: 16px 0 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+      text-wrap: pretty;
+    }
+
+    .unlock {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .unlock strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+
+    .unlock p {
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .unlock-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+
+    .password-input {
+      width: 100%;
+      min-height: 42px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfb;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .password-input:focus {
+      outline: 3px solid rgba(25, 127, 88, 0.18);
+      border-color: var(--accent);
+    }
+
+    .unlock-state {
+      min-height: 21px;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .unlock-state.ok { color: var(--accent-dark); }
+    .unlock-state.bad { color: var(--danger); }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 1px 0 rgba(20, 26, 23, 0.04);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 760;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .button:hover { border-color: #b8c5bd; transform: translateY(-1px); }
+    .button:active { transform: translateY(0); }
+    .button:focus-visible { outline: 3px solid rgba(25, 127, 88, 0.22); outline-offset: 2px; }
+    .button.primary { border-color: var(--accent); background: var(--accent); color: #ffffff; }
+    .button.primary:hover { border-color: var(--accent-dark); background: var(--accent-dark); }
+    .button.blue { border-color: #bfd0ff; background: var(--blue-soft); color: var(--blue); }
+    .button.copied { border-color: var(--accent); background: #e7f6ee; color: var(--accent-dark); }
+    .button.locked { border-color: #f0c0b2; background: var(--danger-soft); color: var(--danger); }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .quick-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 180px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.86);
+      box-shadow: 0 12px 34px rgba(18, 30, 25, 0.05);
+    }
+
+    .quick-card strong { font-size: 18px; letter-spacing: 0; }
+    .quick-card p { margin: 0; color: var(--muted); line-height: 1.65; font-size: 14px; text-wrap: pretty; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-top: 34px;
+      margin-bottom: 14px;
+    }
+
+    .section-head h2 { margin: 0; font-size: 25px; letter-spacing: 0; }
+    .section-head p { margin: 6px 0 0; color: var(--muted); line-height: 1.6; font-size: 14px; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-main { padding: 18px; }
+
+    .panel-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .panel h3 { margin: 0; font-size: 21px; line-height: 1.18; letter-spacing: 0; }
+    .panel .summary { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; text-wrap: pretty; }
+
+    .instruction {
+      display: grid;
+      gap: 8px;
+      margin: 16px 0;
+      padding: 13px;
+      border-radius: var(--radius);
+      background: #f8faf8;
+      border: 1px solid #e8eee8;
+      color: #26302b;
+      line-height: 1.58;
+      font-size: 14px;
+    }
+
+    .instruction span { display: flex; gap: 8px; align-items: baseline; }
+    .instruction b { color: var(--accent-dark); font-size: 13px; white-space: nowrap; }
+
+    .copy-block {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .copy-line {
+      display: grid;
+      gap: 9px;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: #fbfcfb;
+      border: 1px solid var(--line);
+    }
+
+    .copy-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .code-preview {
+      min-height: 44px;
+      max-height: 132px;
+      margin: 0;
+      padding: 10px;
+      overflow: auto;
+      border-radius: 6px;
+      background: #111614;
+      color: #e8f2ec;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    details { border-top: 1px solid var(--line); background: #fafbfa; }
+    summary { min-height: 44px; padding: 13px 18px; color: var(--muted); cursor: pointer; font-weight: 760; font-size: 14px; }
+    details .full-text { margin: 0 18px 18px; }
+
+    .repo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .repo-card {
+      display: grid;
+      gap: 13px;
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 14px 38px rgba(18, 30, 25, 0.06);
+    }
+
+    .repo-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .repo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      object-fit: cover;
+      flex: 0 0 auto;
+    }
+
+    .repo-name {
+      min-width: 0;
+      font-weight: 850;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .repo-type { margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 720; }
+    .repo-desc { min-height: 66px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; text-wrap: pretty; }
+
+    .repo-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .repo-meta span {
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: #45504a;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .notice {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 24px;
+      padding: 14px;
+      border: 1px solid #efdca8;
+      border-radius: var(--radius);
+      background: var(--warn-soft);
+      color: var(--warn);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .notice strong { color: #674005; }
+
+    .footer {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+      .hero, .quick-grid, .steps, .repo-grid { grid-template-columns: 1fr; }
+      .repo-desc { min-height: 0; }
+    }
+
+    @media (min-width: 981px) and (max-width: 1160px) {
+      .repo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .page { width: min(100% - 22px, 1180px); padding-top: 12px; }
+      .hero { padding-top: 14px; }
+      h1 { font-size: 36px; line-height: 1.04; }
+      .button, .button-row { width: 100%; }
+      .button { justify-content: center; }
+      .section-head { display: block; }
+      .unlock-form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <div class="eyebrow" aria-label="页面特性">
+          <span class="chip">GitHub Pages</span>
+          <span class="chip">密码解锁</span>
+          <span class="chip">复制即导入</span>
+        </div>
+        <h1 id="page-title">Clash Verge / v2ray 快速导入</h1>
+        <p>公开页面只保存加密内容。输入密码后，浏览器会在本地解锁订阅和节点，再执行复制。</p>
+      </div>
+      <form class="unlock" id="unlockForm">
+        <strong>解锁复制内容</strong>
+        <p>仓库入口可直接打开；订阅和节点需要密码解锁。</p>
+        <div class="unlock-form">
+          <input class="password-input" id="passwordInput" type="password" autocomplete="current-password" placeholder="输入访问密码">
+          <button class="button primary" type="submit">解锁</button>
+        </div>
+        <div class="unlock-state" id="unlockState">未解锁</div>
+      </form>
+    </section>
+
+    <section class="quick-grid" aria-label="快速选择">
+      <article class="quick-card">
+        <strong>电脑想用 Clash Verge</strong>
+        <p>解锁后复制 Clash 订阅链接，进入 Clash Verge Rev 的订阅配置里粘贴即可。</p>
+        <div class="button-row">
+          <button class="button primary" type="button" data-copy="clashSub">复制订阅</button>
+          <a class="button" data-open="clashRepo" target="_blank" rel="noreferrer">打开仓库</a>
+        </div>
+      </article>
+      <article class="quick-card">
+        <strong>电脑想用 v2rayN</strong>
+        <p>先从 GitHub 下载最新版，再复制全部节点，粘贴进软件导入。</p>
+        <div class="button-row">
+          <button class="button primary" type="button" data-copy="v2rayNodes">复制节点</button>
+          <a class="button" data-open="v2rayNRepo" target="_blank" rel="noreferrer">下载软件</a>
+        </div>
+      </article>
+      <article class="quick-card">
+        <strong>手机想用 v2rayNG</strong>
+        <p>手机安装 v2rayNG 后，用电脑端 v2rayN 的分享二维码添加节点。</p>
+        <div class="button-row">
+          <a class="button primary" data-open="v2rayNGRepo" target="_blank" rel="noreferrer">下载安卓端</a>
+          <button class="button" type="button" data-copy="v2rayNGRepo">复制仓库</button>
+        </div>
+      </article>
+    </section>
+
+    <section aria-labelledby="usage-title">
+      <div class="section-head">
+        <div>
+          <h2 id="usage-title">使用步骤</h2>
+          <p>解锁前隐藏敏感长链接，解锁后复制按钮会复制完整原文。</p>
+        </div>
+      </div>
+
+      <div class="steps">
+        <article class="panel">
+          <div class="panel-main">
+            <div class="panel-top">
+              <div>
+                <h3>使用 Clash Verge</h3>
+                <p class="summary">适合已经使用 Clash 系客户端的电脑端导入。</p>
+              </div>
+              <span class="number">01</span>
+            </div>
+
+            <div class="instruction">
+              <span><b>下载</b> 打开 Clash Verge Rev 仓库，按系统下载最新版。</span>
+              <span><b>解锁</b> 输入密码后复制 Clash 订阅链接。</span>
+              <span><b>导入</b> 在订阅或配置入口粘贴。</span>
+            </div>
+
+            <div class="copy-block">
+              <div class="copy-line">
+                <div class="copy-title">
+                  <span>MITCE 面板链接</span>
+                  <button class="button" type="button" data-copy="mitce">复制</button>
+                </div>
+                <pre class="code-preview" data-preview="mitce"></pre>
+              </div>
+              <div class="copy-line">
+                <div class="copy-title">
+                  <span>Clash 订阅链接</span>
+                  <button class="button primary" type="button" data-copy="clashSub">复制</button>
+                </div>
+                <pre class="code-preview" data-preview="clashSub"></pre>
+              </div>
+            </div>
+
+            <div class="button-row" style="margin-top: 14px;">
+              <a class="button" data-open="mitce" target="_blank" rel="noreferrer">打开 MITCE</a>
+              <a class="button blue" data-open="clashRepo" target="_blank" rel="noreferrer">打开 Clash Verge 仓库</a>
+            </div>
+          </div>
+          <details>
+            <summary>查看 Clash 订阅完整内容</summary>
+            <pre class="code-preview full-text" data-full="clashSub"></pre>
+          </details>
+        </article>
+
+        <article class="panel">
+          <div class="panel-main">
+            <div class="panel-top">
+              <div>
+                <h3>使用 v2rayN 电脑端</h3>
+                <p class="summary">适合 Windows / Linux / macOS 客户端导入节点。</p>
+              </div>
+              <span class="number">02</span>
+            </div>
+
+            <div class="instruction">
+              <span><b>下载</b> 打开 2dust/v2rayN 仓库的 Release 页面。</span>
+              <span><b>复制</b> 解锁后点击下方按钮复制全部节点。</span>
+              <span><b>粘贴</b> 回到软件里直接粘贴导入。</span>
+            </div>
+
+            <div class="copy-line">
+              <div class="copy-title">
+                <span>全部节点内容</span>
+                <button class="button primary" type="button" data-copy="v2rayNodes">复制</button>
+              </div>
+              <pre class="code-preview" data-preview="v2rayNodes"></pre>
+            </div>
+
+            <div class="button-row" style="margin-top: 14px;">
+              <a class="button blue" data-open="v2rayNRepo" target="_blank" rel="noreferrer">打开 v2rayN 仓库</a>
+              <button class="button" type="button" data-copy="v2rayNRepo">复制仓库链接</button>
+            </div>
+          </div>
+          <details>
+            <summary>查看 v2ray 节点完整内容</summary>
+            <pre class="code-preview full-text" data-full="v2rayNodes"></pre>
+          </details>
+        </article>
+
+        <article class="panel">
+          <div class="panel-main">
+            <div class="panel-top">
+              <div>
+                <h3>使用 v2rayNG 手机端</h3>
+                <p class="summary">适合 Android 手机通过二维码导入节点。</p>
+              </div>
+              <span class="number">03</span>
+            </div>
+
+            <div class="instruction">
+              <span><b>手机</b> 打开 v2rayNG 仓库，下载安装最新版。</span>
+              <span><b>电脑</b> 打开 v2rayN，按 <strong>Ctrl + F</strong> 分享。</span>
+              <span><b>导入</b> 手机端扫描电脑端二维码添加节点。</span>
+            </div>
+
+            <div class="copy-line">
+              <div class="copy-title">
+                <span>v2rayNG 下载仓库</span>
+                <button class="button" type="button" data-copy="v2rayNGRepo">复制</button>
+              </div>
+              <pre class="code-preview" data-preview="v2rayNGRepo"></pre>
+            </div>
+
+            <div class="button-row" style="margin-top: 14px;">
+              <a class="button primary" data-open="v2rayNGRepo" target="_blank" rel="noreferrer">打开 v2rayNG 仓库</a>
+              <button class="button" type="button" data-copy="v2rayNodes">复制节点备用</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="repo-title">
+      <div class="section-head">
+        <div>
+          <h2 id="repo-title">相关仓库</h2>
+          <p>仓库图标来自 GitHub 头像资源，并已保存到页面目录。</p>
+        </div>
+      </div>
+
+      <div class="repo-grid">
+        <article class="repo-card">
+          <div class="repo-head">
+            <img class="repo-icon" src="assets/clash-verge-rev.png" alt="clash-verge-rev 仓库图标">
+            <div>
+              <div class="repo-name">clash-verge-rev/clash-verge-rev</div>
+              <div class="repo-type">Clash GUI 客户端</div>
+            </div>
+          </div>
+          <p class="repo-desc">现代化 Tauri 图形客户端，支持 Windows、macOS、Linux。</p>
+          <div class="repo-meta"><span>128.9k stars</span><span>2026-07-01 更新</span></div>
+          <div class="button-row"><a class="button primary" data-open="clashRepo" target="_blank" rel="noreferrer">打开</a><button class="button" type="button" data-copy="clashRepo">复制</button></div>
+        </article>
+
+        <article class="repo-card">
+          <div class="repo-head">
+            <img class="repo-icon" src="assets/2dust.png" alt="2dust 仓库图标">
+            <div>
+              <div class="repo-name">2dust/v2rayN</div>
+              <div class="repo-type">电脑端 v2ray 客户端</div>
+            </div>
+          </div>
+          <p class="repo-desc">跨平台 GUI 客户端，支持 Xray、sing-box 等核心。</p>
+          <div class="repo-meta"><span>110.3k stars</span><span>2026-07-01 更新</span></div>
+          <div class="button-row"><a class="button primary" data-open="v2rayNRepo" target="_blank" rel="noreferrer">打开</a><button class="button" type="button" data-copy="v2rayNRepo">复制</button></div>
+        </article>
+
+        <article class="repo-card">
+          <div class="repo-head">
+            <img class="repo-icon" src="assets/2dust.png" alt="2dust 仓库图标">
+            <div>
+              <div class="repo-name">2dust/v2rayNG</div>
+              <div class="repo-type">Android 客户端</div>
+            </div>
+          </div>
+          <p class="repo-desc">Android 端 V2Ray 客户端，支持 Xray core 与 v2fly core。</p>
+          <div class="repo-meta"><span>58.9k stars</span><span>2026-07-01 更新</span></div>
+          <div class="button-row"><a class="button primary" data-open="v2rayNGRepo" target="_blank" rel="noreferrer">打开</a><button class="button" type="button" data-copy="v2rayNGRepo">复制</button></div>
+        </article>
+
+        <article class="repo-card">
+          <div class="repo-head">
+            <img class="repo-icon" src="assets/acl4ssr.png" alt="ACL4SSR 仓库图标">
+            <div>
+              <div class="repo-name">ACL4SSR/ACL4SSR</div>
+              <div class="repo-type">Clash 规则配置</div>
+            </div>
+          </div>
+          <p class="repo-desc">Clash 订阅转换链接里引用了该规则配置文件。</p>
+          <div class="repo-meta"><span>6.3k stars</span><span>2026-07-01 更新</span></div>
+          <div class="button-row"><a class="button primary" data-open="acl4ssrRepo" target="_blank" rel="noreferrer">打开</a><button class="button" type="button" data-copy="acl4ssrRepo">复制</button></div>
+        </article>
+      </div>
+    </section>
+
+    <div class="notice" role="note">
+      <strong>提醒</strong>
+      <span>GitHub Pages 是公开网页。这个版本把节点内容加密保存，访问密码请单独保管。</span>
+    </div>
+
+    <footer class="footer">
+      仓库信息通过 GitHub 于 2026-07-01 核对；复制按钮使用浏览器剪贴板 API，并带有本地回退方案。
+    </footer>
+  </main>
+
+  <script>
+    const encryptedBundle = {"salt":"p7YBJ2odrmwxStTpv/VWxA==","iv":"X2NWcWStb1wwheJ2","data":"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"};
+    const publicPayloads = {
+      clashRepo: "https://github.com/clash-verge-rev/clash-verge-rev",
+      v2rayNRepo: "https://github.com/2dust/v2rayN",
+      v2rayNGRepo: "https://github.com/2dust/v2rayNG",
+      acl4ssrRepo: "https://github.com/ACL4SSR/ACL4SSR"
+    };
+
+    const lockedText = "已加密，输入密码后显示和复制";
+    const previewLength = 168;
+    let payloads = { ...publicPayloads };
+    let unlocked = false;
+
+    function base64ToBytes(value) {
+      const binary = atob(value);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    async function decryptBundle(password) {
+      const encoder = new TextEncoder();
+      const baseKey = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveKey"]);
+      const key = await crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt: base64ToBytes(encryptedBundle.salt), iterations: 240000, hash: "SHA-256" },
+        baseKey,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["decrypt"]
+      );
+      const plain = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: base64ToBytes(encryptedBundle.iv) },
+        key,
+        base64ToBytes(encryptedBundle.data)
+      );
+      return JSON.parse(new TextDecoder().decode(plain));
+    }
+
+    function formatPreview(value) {
+      if (!value) return lockedText;
+      if (value.length <= previewLength) return value;
+      return value.slice(0, previewLength) + "\n...\n完整内容请点复制或展开查看";
+    }
+
+    function setButtonState(button, text, mode = "copied") {
+      const original = button.dataset.originalLabel || button.textContent.trim();
+      button.dataset.originalLabel = original;
+      button.classList.add(mode);
+      button.textContent = text;
+      window.setTimeout(() => {
+        button.classList.remove(mode);
+        button.textContent = original;
+      }, 1500);
+    }
+
+    async function copyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+
+      const helper = document.createElement("textarea");
+      helper.value = text;
+      helper.setAttribute("readonly", "");
+      helper.style.position = "fixed";
+      helper.style.top = "-1000px";
+      helper.style.left = "-1000px";
+      document.body.appendChild(helper);
+      helper.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(helper);
+      if (!ok) throw new Error("Copy command failed");
+    }
+
+    function hydrateContent() {
+      document.querySelectorAll("[data-preview]").forEach((node) => {
+        node.textContent = formatPreview(payloads[node.dataset.preview]);
+      });
+
+      document.querySelectorAll("[data-full]").forEach((node) => {
+        node.textContent = payloads[node.dataset.full] || lockedText;
+      });
+
+      document.querySelectorAll("[data-open]").forEach((node) => {
+        const target = payloads[node.dataset.open];
+        if (target) node.setAttribute("href", target);
+        if (!target && !node.dataset.openSecret) node.setAttribute("aria-disabled", "true");
+      });
+    }
+
+    function bindCopyButtons() {
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const key = button.dataset.copy;
+          const value = payloads[key];
+          if (!value) {
+            document.getElementById("passwordInput").focus();
+            setButtonState(button, "先解锁", "locked");
+            return;
+          }
+
+          try {
+            await copyToClipboard(value);
+            setButtonState(button, "已复制");
+          } catch (error) {
+            console.error(error);
+            setButtonState(button, "复制失败", "locked");
+          }
+        });
+      });
+    }
+
+    function bindUnlock() {
+      const form = document.getElementById("unlockForm");
+      const input = document.getElementById("passwordInput");
+      const state = document.getElementById("unlockState");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        state.className = "unlock-state";
+        state.textContent = "正在解锁...";
+
+        try {
+          const decrypted = await decryptBundle(input.value);
+          payloads = { ...publicPayloads, ...decrypted };
+          unlocked = true;
+          input.value = "";
+          state.className = "unlock-state ok";
+          state.textContent = "已解锁，可以复制订阅和节点";
+          hydrateContent();
+        } catch (error) {
+          console.error(error);
+          unlocked = false;
+          state.className = "unlock-state bad";
+          state.textContent = "密码不正确";
+        }
+      });
+    }
+
+    hydrateContent();
+    bindCopyButtons();
+    bindUnlock();
+  </script>
+</body>
+</html>
