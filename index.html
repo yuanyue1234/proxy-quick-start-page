@@ -6,682 +6,832 @@
   <title>Clash Verge / v2ray 快速导入</title>
   <style>
     :root {
-      color-scheme: light;
-      --bg: #f6f7f4;
-      --paper: #ffffff;
-      --ink: #161a18;
-      --muted: #656d68;
-      --line: #dfe5de;
-      --soft: #edf2ec;
-      --accent: #197f58;
-      --accent-dark: #0f5e40;
-      --blue: #2458b8;
-      --blue-soft: #eaf0ff;
-      --warn: #8a5b13;
-      --warn-soft: #fff5da;
-      --danger: #b0442d;
-      --danger-soft: #fff0eb;
-      --shadow: 0 22px 60px rgba(18, 30, 25, 0.09);
-      --radius: 8px;
-      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --brand-green: #00ed64;
+      --brand-green-dark: #00684a;
+      --brand-green-soft: #e3fcf7;
+      --brand-teal-deep: #001e2b;
+      --brand-teal: #0f4c5c;
+      --canvas: #ffffff;
+      --canvas-dark: #061621;
+      --surface: #f4f7f6;
+      --surface-soft: #eef4f1;
+      --hairline: #d7e2dd;
+      --hairline-strong: #a6bbb2;
+      --ink: #001e2b;
+      --charcoal: #1b3037;
+      --slate: #53656d;
+      --steel: #738289;
+      --warning-bg: #fff7df;
+      --warning-text: #72510b;
+      --danger: #b42318;
+      --shadow-card: 0 4px 12px rgba(0, 30, 43, 0.08);
+      --shadow-hero: 0 12px 24px -4px rgba(0, 30, 43, 0.22);
+      --radius-card: 12px;
+      --radius-input: 8px;
+      --radius-pill: 9999px;
+      --font: "Euclid Circular A", "Aptos", "Segoe UI", "Microsoft YaHei", sans-serif;
+      --mono: "Source Code Pro", "SFMono-Regular", Menlo, Consolas, monospace;
     }
 
     * { box-sizing: border-box; }
 
+    html { min-height: 100%; background: var(--brand-teal-deep); }
+
     body {
       margin: 0;
       min-height: 100vh;
-      background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(246,247,244,0.98) 38%), var(--bg);
       color: var(--ink);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: var(--surface);
+      font-family: var(--font);
       letter-spacing: 0;
     }
+
+    body.locked { overflow: hidden; background: var(--brand-teal-deep); }
 
     a { color: inherit; text-decoration: none; }
 
-    .page {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 28px 0 40px;
+    .unlock-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 12% 16%, rgba(0, 237, 100, 0.16), transparent 28%),
+        radial-gradient(circle at 82% 22%, rgba(19, 170, 82, 0.18), transparent 32%),
+        linear-gradient(135deg, #001e2b 0%, #052c3a 48%, #001e2b 100%);
+      transition: opacity 240ms ease, visibility 240ms ease;
     }
 
-    .hero {
+    .unlock-screen.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .unlock-inner {
+      width: min(1080px, 100%);
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 360px;
-      gap: 24px;
-      align-items: end;
-      padding: 24px 0 22px;
-      border-bottom: 1px solid var(--line);
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .unlock-copy {
+      max-width: 720px;
     }
 
     .eyebrow {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .chip {
       display: inline-flex;
       align-items: center;
-      min-height: 28px;
-      padding: 4px 10px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,0.7);
-      color: var(--muted);
+      min-height: 30px;
+      padding: 4px 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-pill);
+      color: rgba(255,255,255,0.78);
       font-size: 13px;
-      font-weight: 650;
+      font-weight: 600;
     }
 
     h1 {
-      margin: 0;
-      max-width: 740px;
-      font-size: clamp(34px, 5vw, 62px);
-      line-height: 0.98;
+      margin: 22px 0 18px;
+      font-size: clamp(42px, 7vw, 76px);
+      line-height: 1.08;
+      font-weight: 500;
       letter-spacing: 0;
       text-wrap: pretty;
     }
 
-    .hero p {
-      margin: 16px 0 0;
-      max-width: 680px;
-      color: var(--muted);
-      font-size: 17px;
-      line-height: 1.7;
+    .unlock-copy p {
+      margin: 0;
+      max-width: 620px;
+      color: rgba(255,255,255,0.74);
+      font-size: 18px;
+      line-height: 1.6;
       text-wrap: pretty;
     }
 
-    .unlock {
+    .terminal-card {
+      margin-top: 30px;
+      width: min(520px, 100%);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: var(--radius-card);
+      background: var(--canvas-dark);
+      box-shadow: var(--shadow-hero);
+    }
+
+    .terminal-top {
+      display: flex;
+      gap: 6px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--brand-green); opacity: 0.9; }
+    .dot:nth-child(2) { background: #13aa52; }
+    .dot:nth-child(3) { background: #8ed1fc; }
+
+    .terminal-card pre {
+      margin: 0;
       padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--paper);
-      box-shadow: var(--shadow);
-    }
-
-    .unlock strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 17px;
-    }
-
-    .unlock p {
-      margin: 0 0 12px;
+      color: #d9f7e8;
+      font-family: var(--mono);
       font-size: 13px;
-      line-height: 1.55;
+      line-height: 1.65;
+      white-space: pre-wrap;
     }
 
-    .unlock-form {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 8px;
+    .unlock-panel {
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--radius-card);
+      background: rgba(255,255,255,0.96);
+      color: var(--ink);
+      box-shadow: var(--shadow-hero);
+    }
+
+    .unlock-panel h2 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      line-height: 1.25;
+      font-weight: 500;
+    }
+
+    .unlock-panel p {
+      margin: 0 0 18px;
+      color: var(--slate);
+      font-size: 14px;
+      line-height: 1.55;
     }
 
     .password-input {
       width: 100%;
-      min-height: 42px;
-      padding: 0 11px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: #fbfcfb;
+      height: 48px;
+      padding: 0 14px;
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-input);
       color: var(--ink);
+      background: var(--canvas);
       font: inherit;
-      font-size: 14px;
+      font-size: 16px;
     }
 
     .password-input:focus {
-      outline: 3px solid rgba(25, 127, 88, 0.18);
-      border-color: var(--accent);
-    }
-
-    .unlock-state {
-      min-height: 21px;
-      margin-top: 9px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 720;
-    }
-
-    .unlock-state.ok { color: var(--accent-dark); }
-    .unlock-state.bad { color: var(--danger); }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      outline: none;
+      border: 2px solid var(--brand-green-dark);
     }
 
     .button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      min-height: 42px;
-      padding: 0 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--paper);
+      min-height: 44px;
+      padding: 10px 22px;
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-pill);
+      background: transparent;
       color: var(--ink);
-      box-shadow: 0 1px 0 rgba(20, 26, 23, 0.04);
-      cursor: pointer;
       font: inherit;
       font-size: 14px;
-      font-weight: 760;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
-      user-select: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
       white-space: nowrap;
     }
 
-    .button:hover { border-color: #b8c5bd; transform: translateY(-1px); }
+    .button:hover { transform: translateY(-1px); }
     .button:active { transform: translateY(0); }
-    .button:focus-visible { outline: 3px solid rgba(25, 127, 88, 0.22); outline-offset: 2px; }
-    .button.primary { border-color: var(--accent); background: var(--accent); color: #ffffff; }
-    .button.primary:hover { border-color: var(--accent-dark); background: var(--accent-dark); }
-    .button.blue { border-color: #bfd0ff; background: var(--blue-soft); color: var(--blue); }
-    .button.copied { border-color: var(--accent); background: #e7f6ee; color: var(--accent-dark); }
-    .button.locked { border-color: #f0c0b2; background: var(--danger-soft); color: var(--danger); }
+    .button:focus-visible { outline: 3px solid rgba(0, 237, 100, 0.24); outline-offset: 2px; }
+    .button.primary { border-color: var(--brand-green); background: var(--brand-green); color: var(--ink); }
+    .button.secondary { background: var(--canvas); color: var(--ink); }
+    .button.dark { border-color: rgba(255,255,255,0.22); color: #fff; }
+    .button.copied { border-color: var(--brand-green); background: var(--brand-green-soft); color: var(--brand-green-dark); }
+    .button.locked { border-color: #f4b4ae; background: #fff1ef; color: var(--danger); }
 
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 18px;
+    .unlock-button { width: 100%; margin-top: 12px; }
+
+    .unlock-state {
+      min-height: 20px;
+      margin-top: 12px;
+      color: var(--steel);
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .quick-card {
+    .unlock-state.ok { color: var(--brand-green-dark); }
+    .unlock-state.bad { color: var(--danger); }
+
+    .app {
+      display: none;
+      min-height: 100vh;
+      background: var(--surface);
+    }
+
+    .app.is-visible {
+      display: block;
+      animation: fadeIn 260ms ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-band {
+      padding: 44px 0 72px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(0, 237, 100, 0.12), transparent 30%),
+        linear-gradient(135deg, #001e2b, #052c3a);
+    }
+
+    .container {
+      width: min(1280px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .topbar {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-      min-height: 180px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,0.86);
-      box-shadow: 0 12px 34px rgba(18, 30, 25, 0.05);
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 54px;
     }
 
-    .quick-card strong { font-size: 18px; letter-spacing: 0; }
-    .quick-card p { margin: 0; color: var(--muted); line-height: 1.65; font-size: 14px; text-wrap: pretty; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--brand-green);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+      gap: 42px;
+      align-items: end;
+    }
+
+    .hero-grid h2 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1.1;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-wrap: pretty;
+    }
+
+    .hero-grid p {
+      margin: 18px 0 0;
+      max-width: 660px;
+      color: rgba(255,255,255,0.74);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .hero-actions, .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .hero-actions { margin-top: 28px; }
+
+    .status-panel {
+      border-radius: var(--radius-card);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 20px;
+    }
+
+    .status-panel strong {
+      display: block;
+      margin-bottom: 14px;
+      color: var(--brand-green);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 11px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.76);
+      font-size: 14px;
+    }
+
+    .status-row b { color: #fff; font-weight: 600; }
+
+    section.content-section {
+      padding: 56px 0 0;
+    }
 
     .section-head {
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
-      gap: 16px;
-      margin-top: 34px;
-      margin-bottom: 14px;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 18px;
     }
 
-    .section-head h2 { margin: 0; font-size: 25px; letter-spacing: 0; }
-    .section-head p { margin: 6px 0 0; color: var(--muted); line-height: 1.6; font-size: 14px; }
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.2;
+      font-weight: 500;
+    }
 
-    .steps {
+    .section-head p {
+      margin: 8px 0 0;
+      max-width: 620px;
+      color: var(--slate);
+      line-height: 1.55;
+    }
+
+    .software-grid, .step-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
+      gap: 18px;
     }
 
-    .panel {
-      position: relative;
+    .software-card, .step-card, .repo-card {
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-card);
+      background: var(--canvas);
+      box-shadow: var(--shadow-card);
+    }
+
+    .software-card {
+      display: grid;
+      gap: 16px;
+      padding: 24px;
+    }
+
+    .software-head {
       display: flex;
-      flex-direction: column;
-      min-width: 0;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--paper);
-      box-shadow: var(--shadow);
+      gap: 14px;
+      align-items: center;
+    }
+
+    .app-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid var(--hairline);
+      background: var(--surface-soft);
+    }
+
+    .software-card h3, .step-card h3, .repo-card h3 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.3;
+      font-weight: 500;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: var(--brand-green-soft);
+      color: var(--brand-green-dark);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .software-card p, .step-card p, .repo-card p {
+      margin: 0;
+      color: var(--slate);
+      font-size: 14px;
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+
+    .step-card {
+      position: relative;
+      display: grid;
+      gap: 16px;
+      padding: 24px;
       overflow: hidden;
     }
 
-    .panel-main { padding: 18px; }
-
-    .panel-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 14px;
+    .step-card.featured {
+      background: var(--brand-green-soft);
+      border: 2px solid var(--brand-green);
     }
 
-    .number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: var(--soft);
-      color: var(--accent-dark);
-      font-size: 13px;
-      font-weight: 850;
-    }
-
-    .panel h3 { margin: 0; font-size: 21px; line-height: 1.18; letter-spacing: 0; }
-    .panel .summary { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; text-wrap: pretty; }
-
-    .instruction {
+    .step-number {
+      width: 42px;
+      height: 42px;
       display: grid;
-      gap: 8px;
-      margin: 16px 0;
-      padding: 13px;
-      border-radius: var(--radius);
-      background: #f8faf8;
-      border: 1px solid #e8eee8;
-      color: #26302b;
-      line-height: 1.58;
-      font-size: 14px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--brand-green);
+      font-weight: 600;
     }
 
-    .instruction span { display: flex; gap: 8px; align-items: baseline; }
-    .instruction b { color: var(--accent-dark); font-size: 13px; white-space: nowrap; }
+    .copy-panel {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
 
-    .copy-block {
+    .copy-box {
       display: grid;
       gap: 10px;
-      margin-top: 14px;
-    }
-
-    .copy-line {
-      display: grid;
-      gap: 9px;
-      padding: 12px;
-      border-radius: var(--radius);
-      background: #fbfcfb;
-      border: 1px solid var(--line);
+      padding: 14px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-card);
+      background: var(--canvas);
     }
 
     .copy-title {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 760;
+      align-items: center;
+      gap: 12px;
+      color: var(--charcoal);
+      font-size: 14px;
+      font-weight: 600;
     }
 
     .code-preview {
-      min-height: 44px;
-      max-height: 132px;
       margin: 0;
-      padding: 10px;
+      min-height: 64px;
+      max-height: 132px;
       overflow: auto;
-      border-radius: 6px;
-      background: #111614;
-      color: #e8f2ec;
+      padding: 14px;
+      border-radius: var(--radius-input);
+      background: var(--canvas-dark);
+      color: #d9f7e8;
       font-family: var(--mono);
-      font-size: 12px;
+      font-size: 13px;
       line-height: 1.55;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
     }
 
-    details { border-top: 1px solid var(--line); background: #fafbfa; }
-    summary { min-height: 44px; padding: 13px 18px; color: var(--muted); cursor: pointer; font-weight: 760; font-size: 14px; }
-    details .full-text { margin: 0 18px 18px; }
+    details {
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-card);
+      background: var(--canvas);
+      overflow: hidden;
+    }
+
+    summary {
+      min-height: 48px;
+      padding: 14px 18px;
+      cursor: pointer;
+      color: var(--charcoal);
+      font-weight: 600;
+    }
+
+    details .code-preview {
+      margin: 0 18px 18px;
+    }
 
     .repo-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      gap: 18px;
     }
 
     .repo-card {
       display: grid;
-      gap: 13px;
-      min-width: 0;
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--paper);
-      box-shadow: 0 14px 38px rgba(18, 30, 25, 0.06);
+      gap: 14px;
+      padding: 20px;
     }
 
     .repo-head {
       display: flex;
+      gap: 12px;
       align-items: center;
-      gap: 10px;
       min-width: 0;
-    }
-
-    .repo-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 8px;
-      border: 1px solid var(--line);
-      background: var(--soft);
-      object-fit: cover;
-      flex: 0 0 auto;
     }
 
     .repo-name {
       min-width: 0;
-      font-weight: 850;
-      line-height: 1.2;
       overflow-wrap: anywhere;
+      font-weight: 600;
+      line-height: 1.25;
     }
 
-    .repo-type { margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 720; }
-    .repo-desc { min-height: 66px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; text-wrap: pretty; }
-
-    .repo-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-    }
-
-    .repo-meta span {
-      padding: 5px 8px;
-      border-radius: 999px;
-      background: var(--soft);
-      color: #45504a;
-      font-size: 12px;
-      font-weight: 760;
+    .repo-type {
+      margin-top: 3px;
+      color: var(--steel);
+      font-size: 13px;
     }
 
     .notice {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin-top: 24px;
-      padding: 14px;
-      border: 1px solid #efdca8;
-      border-radius: var(--radius);
-      background: var(--warn-soft);
-      color: var(--warn);
-      line-height: 1.6;
+      margin: 40px 0;
+      padding: 16px 18px;
+      border: 1px solid #f1d894;
+      border-radius: var(--radius-card);
+      color: var(--warning-text);
+      background: var(--warning-bg);
+      line-height: 1.55;
       font-size: 14px;
     }
 
-    .notice strong { color: #674005; }
-
     .footer {
-      margin-top: 24px;
-      padding-top: 18px;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
+      margin-top: 56px;
+      padding: 34px 0;
+      color: rgba(255,255,255,0.68);
+      background: var(--brand-teal-deep);
+      font-size: 14px;
     }
 
     @media (max-width: 980px) {
-      .hero, .quick-grid, .steps, .repo-grid { grid-template-columns: 1fr; }
-      .repo-desc { min-height: 0; }
+      .unlock-inner, .hero-grid, .software-grid, .step-grid, .repo-grid { grid-template-columns: 1fr; }
+      .unlock-inner { gap: 24px; }
+      .status-panel { margin-top: 8px; }
     }
 
-    @media (min-width: 981px) and (max-width: 1160px) {
+    @media (min-width: 981px) and (max-width: 1180px) {
       .repo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 560px) {
-      .page { width: min(100% - 22px, 1180px); padding-top: 12px; }
-      .hero { padding-top: 14px; }
-      h1 { font-size: 36px; line-height: 1.04; }
-      .button, .button-row { width: 100%; }
+      .unlock-screen { padding: 16px; overflow: auto; place-items: start center; }
+      .unlock-inner { padding: 18px 0 26px; }
+      .terminal-card { display: none; }
+      .container { width: min(100% - 28px, 1280px); }
+      .topbar, .section-head { display: block; }
+      .topbar .button { margin-top: 14px; width: 100%; }
+      .hero-band { padding: 28px 0 46px; }
+      .button, .card-actions { width: 100%; }
       .button { justify-content: center; }
-      .section-head { display: block; }
-      .unlock-form { grid-template-columns: 1fr; }
+      .copy-title { display: grid; }
+      .copy-title .button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
-<body>
-  <main class="page">
-    <section class="hero" aria-labelledby="page-title">
-      <div>
-        <div class="eyebrow" aria-label="页面特性">
-          <span class="chip">GitHub Pages</span>
-          <span class="chip">密码解锁</span>
-          <span class="chip">复制即导入</span>
+<body class="locked">
+  <section class="unlock-screen" id="unlockScreen" aria-labelledby="unlockTitle">
+    <div class="unlock-inner">
+      <div class="unlock-copy">
+        <span class="eyebrow">GitHub Pages / 加密访问</span>
+        <h1 id="unlockTitle">先解锁，再复制导入。</h1>
+        <p>页面内容已经发布到仓库；订阅、节点和面板链接会在输入密码后于浏览器本地解密，随后显示完整使用页。</p>
+        <div class="terminal-card" aria-hidden="true">
+          <div class="terminal-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <pre>$ unlock page
+status: encrypted
+mode: local browser decrypt
+next: Clash Verge / v2ray quick start</pre>
         </div>
-        <h1 id="page-title">Clash Verge / v2ray 快速导入</h1>
-        <p>公开页面只保存加密内容。输入密码后，浏览器会在本地解锁订阅和节点，再执行复制。</p>
       </div>
-      <form class="unlock" id="unlockForm">
-        <strong>解锁复制内容</strong>
-        <p>仓库入口可直接打开；订阅和节点需要密码解锁。</p>
-        <div class="unlock-form">
-          <input class="password-input" id="passwordInput" type="password" autocomplete="current-password" placeholder="输入访问密码">
-          <button class="button primary" type="submit">解锁</button>
-        </div>
-        <div class="unlock-state" id="unlockState">未解锁</div>
+
+      <form class="unlock-panel" id="unlockForm">
+        <h2>输入访问密码</h2>
+        <p>密码正确后会自动进入下载和导入页面。</p>
+        <input class="password-input" id="passwordInput" type="password" inputmode="numeric" autocomplete="current-password" placeholder="请输入密码">
+        <button class="button primary unlock-button" type="submit">解锁页面</button>
+        <div class="unlock-state" id="unlockState">等待输入</div>
       </form>
-    </section>
+    </div>
+  </section>
 
-    <section class="quick-grid" aria-label="快速选择">
-      <article class="quick-card">
-        <strong>电脑想用 Clash Verge</strong>
-        <p>解锁后复制 Clash 订阅链接，进入 Clash Verge Rev 的订阅配置里粘贴即可。</p>
-        <div class="button-row">
-          <button class="button primary" type="button" data-copy="clashSub">复制订阅</button>
-          <a class="button" data-open="clashRepo" target="_blank" rel="noreferrer">打开仓库</a>
+  <main class="app" id="app" aria-hidden="true">
+    <section class="hero-band">
+      <div class="container">
+        <div class="topbar">
+          <div class="brand"><span class="brand-mark">C</span><span>Proxy Quick Start</span></div>
+          <button class="button dark" type="button" id="lockAgain">重新锁定</button>
         </div>
-      </article>
-      <article class="quick-card">
-        <strong>电脑想用 v2rayN</strong>
-        <p>先从 GitHub 下载最新版，再复制全部节点，粘贴进软件导入。</p>
-        <div class="button-row">
-          <button class="button primary" type="button" data-copy="v2rayNodes">复制节点</button>
-          <a class="button" data-open="v2rayNRepo" target="_blank" rel="noreferrer">下载软件</a>
-        </div>
-      </article>
-      <article class="quick-card">
-        <strong>手机想用 v2rayNG</strong>
-        <p>手机安装 v2rayNG 后，用电脑端 v2rayN 的分享二维码添加节点。</p>
-        <div class="button-row">
-          <a class="button primary" data-open="v2rayNGRepo" target="_blank" rel="noreferrer">下载安卓端</a>
-          <button class="button" type="button" data-copy="v2rayNGRepo">复制仓库</button>
-        </div>
-      </article>
-    </section>
 
-    <section aria-labelledby="usage-title">
-      <div class="section-head">
-        <div>
-          <h2 id="usage-title">使用步骤</h2>
-          <p>解锁前隐藏敏感长链接，解锁后复制按钮会复制完整原文。</p>
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">Clash Verge / v2rayN / v2rayNG</span>
+            <h2>下载、复制、导入，三步完成。</h2>
+            <p>把桌面端和手机端的入口统一放在一个页面里：先下载软件，再复制订阅或节点，最后按对应客户端导入。</p>
+            <div class="hero-actions">
+              <button class="button primary" type="button" data-copy="clashSub">复制 Clash 订阅</button>
+              <button class="button dark" type="button" data-copy="v2rayNodes">复制 v2ray 节点</button>
+            </div>
+          </div>
+
+          <div class="status-panel">
+            <strong>当前状态</strong>
+            <div class="status-row"><span>页面</span><b>已解锁</b></div>
+            <div class="status-row"><span>Clash Verge Rev</span><b>v2.5.1</b></div>
+            <div class="status-row"><span>v2rayN</span><b>7.22.7</b></div>
+            <div class="status-row"><span>v2rayNG</span><b>2.2.5</b></div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="steps">
-        <article class="panel">
-          <div class="panel-main">
-            <div class="panel-top">
+    <section class="content-section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>下载软件</h2>
+            <p>每个面板左侧是直接下载，右侧统一为打开仓库。直接下载链接来自 2026-07-01 查询到的最新 GitHub Release。</p>
+          </div>
+        </div>
+
+        <div class="software-grid">
+          <article class="software-card">
+            <div class="software-head">
+              <img class="app-icon" src="assets/clash-verge-rev.png" alt="Clash Verge Rev 图标">
               <div>
-                <h3>使用 Clash Verge</h3>
-                <p class="summary">适合已经使用 Clash 系客户端的电脑端导入。</p>
+                <h3>Clash Verge Rev</h3>
+                <div class="tag-row"><span class="tag">Windows x64</span><span class="tag">v2.5.1</span></div>
               </div>
-              <span class="number">01</span>
             </div>
-
-            <div class="instruction">
-              <span><b>下载</b> 打开 Clash Verge Rev 仓库，按系统下载最新版。</span>
-              <span><b>解锁</b> 输入密码后复制 Clash 订阅链接。</span>
-              <span><b>导入</b> 在订阅或配置入口粘贴。</span>
+            <p>适合导入 Clash 订阅链接，图形界面清楚，电脑端使用最直观。</p>
+            <div class="card-actions">
+              <a class="button primary" data-open="clashDownload" target="_blank" rel="noreferrer">直接下载</a>
+              <a class="button secondary" data-open="clashRepo" target="_blank" rel="noreferrer">打开仓库</a>
             </div>
+          </article>
 
-            <div class="copy-block">
-              <div class="copy-line">
-                <div class="copy-title">
-                  <span>MITCE 面板链接</span>
-                  <button class="button" type="button" data-copy="mitce">复制</button>
-                </div>
-                <pre class="code-preview" data-preview="mitce"></pre>
+          <article class="software-card">
+            <div class="software-head">
+              <img class="app-icon" src="assets/2dust.png" alt="v2rayN 图标">
+              <div>
+                <h3>v2rayN 电脑端</h3>
+                <div class="tag-row"><span class="tag">Windows x64</span><span class="tag">7.22.7</span></div>
               </div>
-              <div class="copy-line">
-                <div class="copy-title">
-                  <span>Clash 订阅链接</span>
-                  <button class="button primary" type="button" data-copy="clashSub">复制</button>
-                </div>
+            </div>
+            <p>适合直接粘贴 vless / vmess / hysteria2 / tuic / anytls 节点。</p>
+            <div class="card-actions">
+              <a class="button primary" data-open="v2rayNDownload" target="_blank" rel="noreferrer">直接下载</a>
+              <a class="button secondary" data-open="v2rayNRepo" target="_blank" rel="noreferrer">打开仓库</a>
+            </div>
+          </article>
+
+          <article class="software-card">
+            <div class="software-head">
+              <img class="app-icon" src="assets/2dust.png" alt="v2rayNG 图标">
+              <div>
+                <h3>v2rayNG 手机端</h3>
+                <div class="tag-row"><span class="tag">Android universal</span><span class="tag">2.2.5</span></div>
+              </div>
+            </div>
+            <p>适合 Android 手机安装后，通过电脑端二维码扫码添加节点。</p>
+            <div class="card-actions">
+              <a class="button primary" data-open="v2rayNGDownload" target="_blank" rel="noreferrer">直接下载</a>
+              <a class="button secondary" data-open="v2rayNGRepo" target="_blank" rel="noreferrer">打开仓库</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>使用步骤</h2>
+            <p>三个卡片对应三种使用方式，复制区只显示需要的内容，按钮样式保持一致。</p>
+          </div>
+        </div>
+
+        <div class="step-grid">
+          <article class="step-card featured">
+            <span class="step-number">01</span>
+            <h3>Clash Verge 导入订阅</h3>
+            <p>下载安装 Clash Verge Rev，进入订阅配置，粘贴 Clash 订阅链接并更新配置。</p>
+            <div class="copy-panel">
+              <div class="copy-box">
+                <div class="copy-title"><span>Clash 订阅链接</span><button class="button primary" type="button" data-copy="clashSub">复制</button></div>
                 <pre class="code-preview" data-preview="clashSub"></pre>
               </div>
-            </div>
-
-            <div class="button-row" style="margin-top: 14px;">
-              <a class="button" data-open="mitce" target="_blank" rel="noreferrer">打开 MITCE</a>
-              <a class="button blue" data-open="clashRepo" target="_blank" rel="noreferrer">打开 Clash Verge 仓库</a>
-            </div>
-          </div>
-          <details>
-            <summary>查看 Clash 订阅完整内容</summary>
-            <pre class="code-preview full-text" data-full="clashSub"></pre>
-          </details>
-        </article>
-
-        <article class="panel">
-          <div class="panel-main">
-            <div class="panel-top">
-              <div>
-                <h3>使用 v2rayN 电脑端</h3>
-                <p class="summary">适合 Windows / Linux / macOS 客户端导入节点。</p>
+              <div class="copy-box">
+                <div class="copy-title"><span>MITCE 面板链接</span><button class="button secondary" type="button" data-copy="mitce">复制</button></div>
+                <pre class="code-preview" data-preview="mitce"></pre>
               </div>
-              <span class="number">02</span>
             </div>
+          </article>
 
-            <div class="instruction">
-              <span><b>下载</b> 打开 2dust/v2rayN 仓库的 Release 页面。</span>
-              <span><b>复制</b> 解锁后点击下方按钮复制全部节点。</span>
-              <span><b>粘贴</b> 回到软件里直接粘贴导入。</span>
-            </div>
-
-            <div class="copy-line">
-              <div class="copy-title">
-                <span>全部节点内容</span>
-                <button class="button primary" type="button" data-copy="v2rayNodes">复制</button>
+          <article class="step-card">
+            <span class="step-number">02</span>
+            <h3>v2rayN 电脑端粘贴</h3>
+            <p>下载安装 v2rayN，把全部节点复制后粘贴到软件中，等待节点列表生成。</p>
+            <div class="copy-panel">
+              <div class="copy-box">
+                <div class="copy-title"><span>全部节点内容</span><button class="button primary" type="button" data-copy="v2rayNodes">复制</button></div>
+                <pre class="code-preview" data-preview="v2rayNodes"></pre>
               </div>
-              <pre class="code-preview" data-preview="v2rayNodes"></pre>
+              <details>
+                <summary>查看完整节点内容</summary>
+                <pre class="code-preview" data-full="v2rayNodes"></pre>
+              </details>
             </div>
+          </article>
 
-            <div class="button-row" style="margin-top: 14px;">
-              <a class="button blue" data-open="v2rayNRepo" target="_blank" rel="noreferrer">打开 v2rayN 仓库</a>
-              <button class="button" type="button" data-copy="v2rayNRepo">复制仓库链接</button>
-            </div>
-          </div>
-          <details>
-            <summary>查看 v2ray 节点完整内容</summary>
-            <pre class="code-preview full-text" data-full="v2rayNodes"></pre>
-          </details>
-        </article>
-
-        <article class="panel">
-          <div class="panel-main">
-            <div class="panel-top">
-              <div>
-                <h3>使用 v2rayNG 手机端</h3>
-                <p class="summary">适合 Android 手机通过二维码导入节点。</p>
+          <article class="step-card">
+            <span class="step-number">03</span>
+            <h3>v2rayNG 手机扫码</h3>
+            <p>手机安装 v2rayNG 后，电脑端 v2rayN 按 Ctrl + F 分享，手机扫码添加节点。</p>
+            <div class="copy-panel">
+              <div class="copy-box">
+                <div class="copy-title"><span>v2rayNG 仓库链接</span><button class="button secondary" type="button" data-copy="v2rayNGRepo">复制</button></div>
+                <pre class="code-preview" data-preview="v2rayNGRepo"></pre>
               </div>
-              <span class="number">03</span>
+              <button class="button primary" type="button" data-copy="v2rayNodes">复制节点备用</button>
             </div>
-
-            <div class="instruction">
-              <span><b>手机</b> 打开 v2rayNG 仓库，下载安装最新版。</span>
-              <span><b>电脑</b> 打开 v2rayN，按 <strong>Ctrl + F</strong> 分享。</span>
-              <span><b>导入</b> 手机端扫描电脑端二维码添加节点。</span>
-            </div>
-
-            <div class="copy-line">
-              <div class="copy-title">
-                <span>v2rayNG 下载仓库</span>
-                <button class="button" type="button" data-copy="v2rayNGRepo">复制</button>
-              </div>
-              <pre class="code-preview" data-preview="v2rayNGRepo"></pre>
-            </div>
-
-            <div class="button-row" style="margin-top: 14px;">
-              <a class="button primary" data-open="v2rayNGRepo" target="_blank" rel="noreferrer">打开 v2rayNG 仓库</a>
-              <button class="button" type="button" data-copy="v2rayNodes">复制节点备用</button>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section aria-labelledby="repo-title">
-      <div class="section-head">
-        <div>
-          <h2 id="repo-title">相关仓库</h2>
-          <p>仓库图标来自 GitHub 头像资源，并已保存到页面目录。</p>
+          </article>
         </div>
       </div>
+    </section>
 
-      <div class="repo-grid">
-        <article class="repo-card">
-          <div class="repo-head">
-            <img class="repo-icon" src="assets/clash-verge-rev.png" alt="clash-verge-rev 仓库图标">
-            <div>
-              <div class="repo-name">clash-verge-rev/clash-verge-rev</div>
-              <div class="repo-type">Clash GUI 客户端</div>
-            </div>
+    <section class="content-section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>相关仓库</h2>
+            <p>保留仓库入口、图标和用途说明，方便后续更新或排查版本。</p>
           </div>
-          <p class="repo-desc">现代化 Tauri 图形客户端，支持 Windows、macOS、Linux。</p>
-          <div class="repo-meta"><span>128.9k stars</span><span>2026-07-01 更新</span></div>
-          <div class="button-row"><a class="button primary" data-open="clashRepo" target="_blank" rel="noreferrer">打开</a><button class="button" type="button" data-copy="clashRepo">复制</button></div>
-        </article>
+        </div>
 
-        <article class="repo-card">
-          <div class="repo-head">
-            <img class="repo-icon" src="assets/2dust.png" alt="2dust 仓库图标">
-            <div>
-              <div class="repo-name">2dust/v2rayN</div>
-              <div class="repo-type">电脑端 v2ray 客户端</div>
-            </div>
-          </div>
-          <p class="repo-desc">跨平台 GUI 客户端，支持 Xray、sing-box 等核心。</p>
-          <div class="repo-meta"><span>110.3k stars</span><span>2026-07-01 更新</span></div>
-          <div class="button-row"><a class="button primary" data-open="v2rayNRepo" target="_blank" rel="noreferrer">打开</a><button class="button" type="button" data-copy="v2rayNRepo">复制</button></div>
-        </article>
+        <div class="repo-grid">
+          <article class="repo-card">
+            <div class="repo-head"><img class="app-icon" src="assets/clash-verge-rev.png" alt="Clash Verge Rev 仓库图标"><div><div class="repo-name">clash-verge-rev/clash-verge-rev</div><div class="repo-type">Clash GUI 客户端</div></div></div>
+            <p>现代化 Tauri 图形客户端，支持 Windows、macOS、Linux。</p>
+            <div class="card-actions"><a class="button primary" data-open="clashRepo" target="_blank" rel="noreferrer">打开仓库</a><button class="button secondary" type="button" data-copy="clashRepo">复制链接</button></div>
+          </article>
+          <article class="repo-card">
+            <div class="repo-head"><img class="app-icon" src="assets/2dust.png" alt="v2rayN 仓库图标"><div><div class="repo-name">2dust/v2rayN</div><div class="repo-type">电脑端 v2ray 客户端</div></div></div>
+            <p>跨平台 GUI 客户端，支持 Xray、sing-box 等核心。</p>
+            <div class="card-actions"><a class="button primary" data-open="v2rayNRepo" target="_blank" rel="noreferrer">打开仓库</a><button class="button secondary" type="button" data-copy="v2rayNRepo">复制链接</button></div>
+          </article>
+          <article class="repo-card">
+            <div class="repo-head"><img class="app-icon" src="assets/2dust.png" alt="v2rayNG 仓库图标"><div><div class="repo-name">2dust/v2rayNG</div><div class="repo-type">Android 客户端</div></div></div>
+            <p>Android 端 V2Ray 客户端，支持 Xray core 与 v2fly core。</p>
+            <div class="card-actions"><a class="button primary" data-open="v2rayNGRepo" target="_blank" rel="noreferrer">打开仓库</a><button class="button secondary" type="button" data-copy="v2rayNGRepo">复制链接</button></div>
+          </article>
+          <article class="repo-card">
+            <div class="repo-head"><img class="app-icon" src="assets/acl4ssr.png" alt="ACL4SSR 仓库图标"><div><div class="repo-name">ACL4SSR/ACL4SSR</div><div class="repo-type">Clash 规则配置</div></div></div>
+            <p>Clash 订阅转换链接里引用了该规则配置文件。</p>
+            <div class="card-actions"><a class="button primary" data-open="acl4ssrRepo" target="_blank" rel="noreferrer">打开仓库</a><button class="button secondary" type="button" data-copy="acl4ssrRepo">复制链接</button></div>
+          </article>
+        </div>
 
-        <article class="repo-card">
-          <div class="repo-head">
-            <img class="repo-icon" src="assets/2dust.png" alt="2dust 仓库图标">
-            <div>
-              <div class="repo-name">2dust/v2rayNG</div>
-              <div class="repo-type">Android 客户端</div>
-            </div>
-          </div>
-          <p class="repo-desc">Android 端 V2Ray 客户端，支持 Xray core 与 v2fly core。</p>
-          <div class="repo-meta"><span>58.9k stars</span><span>2026-07-01 更新</span></div>
-          <div class="button-row"><a class="button primary" data-open="v2rayNGRepo" target="_blank" rel="noreferrer">打开</a><button class="button" type="button" data-copy="v2rayNGRepo">复制</button></div>
-        </article>
-
-        <article class="repo-card">
-          <div class="repo-head">
-            <img class="repo-icon" src="assets/acl4ssr.png" alt="ACL4SSR 仓库图标">
-            <div>
-              <div class="repo-name">ACL4SSR/ACL4SSR</div>
-              <div class="repo-type">Clash 规则配置</div>
-            </div>
-          </div>
-          <p class="repo-desc">Clash 订阅转换链接里引用了该规则配置文件。</p>
-          <div class="repo-meta"><span>6.3k stars</span><span>2026-07-01 更新</span></div>
-          <div class="button-row"><a class="button primary" data-open="acl4ssrRepo" target="_blank" rel="noreferrer">打开</a><button class="button" type="button" data-copy="acl4ssrRepo">复制</button></div>
-        </article>
+        <div class="notice"><strong>提醒：</strong>GitHub Pages 是公开网页。敏感内容以加密形式保存，密码请单独保管。</div>
       </div>
     </section>
 
-    <div class="notice" role="note">
-      <strong>提醒</strong>
-      <span>GitHub Pages 是公开网页。这个版本把节点内容加密保存，访问密码请单独保管。</span>
-    </div>
-
     <footer class="footer">
-      仓库信息通过 GitHub 于 2026-07-01 核对；复制按钮使用浏览器剪贴板 API，并带有本地回退方案。
+      <div class="container">仓库信息与下载链接于 2026-07-01 核对；页面使用本地加密解锁和剪贴板回退方案。</div>
     </footer>
   </main>
 
   <script src="assets/crypto-js.min.js"></script>
   <script>
-    const encryptedBundle = {"salt":"cQUIdsDHbwCFIPBrHKNDVw==","iv":"G5VDkkwCGcYIDUcvYaNzKQ==","data":"/mbwih1yWJMlZ4dLNLXB9Q3bJ7j5TPTBWwBXKGXNFX5u6s+idVALWtkWRBY3q03p6pFc7SXZru60Sik014OHSdNkubvMzFVzSaTCI9bt7OFdvIuVSI54X9/MmG3DfaYOLxPMEgxKkUiJT5o4j8/Esb5sQWu0FwyVx+rWwZuhNAVJTSw5i5moO3dorGdCscL3SfSNHgl2NbE4cfBBDr3QwfyQXp3OD2OZNB1gO3zkensklbPxlEMEJBMLekM06qBisxiEJxYCCM55GzFwAeETup69wX6R4j3SdwLETwJMi2+lLeLsr4PAwCfkt/YTgjOKvYHvA7UG57jE4mhB5r5ZztGzl41mEGM8BMFsyQX8YtjFn9e87Ch03I4K6o7zbSfRnkl+436bQqYJFOSyi+R+d1+QQoyriK8XevBZ8MUsrNu6CpSVFakzXquL9LTPw6beTl1KLPp5Ieq7BoTDE6DnNxdfvn8TdiIO96/hy/9XtRpHM/FSZwuZsP2+EVBazE8oDDCvdPQSWmS0QpylGqHdLYj94EN6sxXRDlsLcmmuHlwX2tejCmI8gHWmMVxsFIY6nf8I96LMWwAM3v411HYzeeAbIzjhZgs/UVQBvYOR2CmV0ThJB3Uj1YBLXo45p5XbwczCFcNaznq/D43E78erKXzq80iyHk1s8s07SqGwl/Ej9lrodN2Ezy5MdMWIiVryKtE+FOOG1jRBsd7aVyE8aJ7X+RM0lAQdGtOOQ50YVPpdtYhMNJ2i+V4eyg6PTmq6ZCVdS+9TlZ4BYunPGWbfvMLjXTwpdX++6TqpfuYthHCTvl6+0Y8ONfg4rxE6hlIDEstuLJ/lvshw9LhQk4+3ryjBd3nP51PEurcbCYNYMkrSXWkMEknYvLCxwOD1s1P89l5KonmBNk3zByQO5yfv8BkNRTtbqotlV+laN7b0F3vDJ/25V4wjK+XoWrFU0s42BaTnnk40Oq3m2pySrm05EjW8Q9ASb27daLY8mn38qUWDQ+4WPKExPh93VpxERVwmpaYk8+PkGZW3ZfSdGxNpq8mHRoBSfJQVGrY9sC4ooOxBoPQTw9WZnCdvr6XSY9AvWCvQY1JM0hPG/SliMu344I/AmSxerEYbta+QBmht8mkowZl/MMJz8UmCiI7uDt/UFWrLsihohIy15haRd3AC/UVHjnJDmJSjNkAu2G4s3hECul4uWUuYlumKUu9f/27Bo2tJMRYt0UWht4mREOaqtc63E/fd0426KnLRVtLhuINQEkbbzgVUrvJJA7mvpwq44PrH3370vqZBT80phejYuADy++m+6jNgc1ISypvNvGQzlhzpE63AuW1IYqO41mCrk4ipfCHg8KlL6QrQ5accPbbSK8ubax1GDlIrN8MSTXBYBm4QxA0eyxLIvxHXsDtbBTJBRf1X5TAU98Rl0PNr+xtWXM6UaogS7+5YcGpO5+jdcCre2Uo49WLmlmIZCZi6odJFEz5ER8xuc02NEvlB4Pq2QeS+a+hNOjsSJM8+V8sk0JDvFFAPAdDIsy9IFaaCmHJzbsIo2r5MIK9IhFxiUXmFCgNY659aG6AlyO+0y6xMjupH9IWr7bTPlh225XfPPF+Pou2ApYuoKtgPEeXJZ4H74OyzcGAJpAFtLZo0vXvQITwDcddH0pZgk7wrmXXH83CTPjf9pbF7NamiwmRgGdSAuL2XsqnQ0vkYmq9nCUdxWnD0wH/dRLwrGESQM898hfB46Rt2CGaPTxeVx+0lXzIedky9P1NzmpPe/ZYw51lPdowrO0xDpPAMTvWL3s9it1Kkkp8sq5ihOizxKUI9O+1wmt1CpXavv1vgW9lQywn4ipCdVruRB6BO8C9PsBYcbxUhA99nVl0GiBII7NdToYa+EcPfS0BSU4TKRx9O2mfDbhWbj264fG1SNOePHnhLXwznPW3pVqptdkGhyDcyHzXCatzEpXOitd6lcsVvJa7rlcteng7UdSznWx5FkuzTluso8ej6LQ7nLtQJMY8xU1thOXIdxLzD8K2E5kJbCtdp10odqn0LwytAphw36kEQNIVhQ8AUrd0ZMgEOtOuCbfZIOwtV9rOf0UfvR4HIEiOJMnA+270wg0WHIR01z7kyEyIRzZEXV9+H4ggsrD+WVK6nWr2OxTZQOlxRl/VcoUZM5JWhefeCm7L2/C5RvvfcjjjJuFOLUzOGtUNtzzAij2xYNn2kw97pARDqJdKgi0EucotzwgPljMtrzR0xJwAve5MNvUhT7fdhk7rF4Wf5tvGBi5sB5hgXc7pZSEOClFoJBAStWBkPYYeQNCekrAvCrSas5PARtp09iRnzUHB5njxn31QdNTd9aB1yg9r04jxIMwPt7HKX0JpOyjrhQ/Az94LhjYBmnsrk20Efr+c0YeU2oOL36xt49ex5UNioh4ws2bN2AL3Z78oDYzbj3r/Vnw/QLAje8yTUsV5IRDFfrX4XlqOhTJMY1X9X72x1j5Vt46LE1wZka3Lyumwc4U3/jJwFiGBEUAJS60VyZ9kJY8pP070Z/49iOj/I5WqBhdSZMBW+NtNVUX/bzSiWCVlayK+mj3JuXEJiPi4aUr/ZGaT/+u17/ohAUb4e3zc50VNL4CVxOaotk4nAugpajXSR9i/8yhNoMOhU8qd97xvlBAkZ7/edl7Y5gmIKhLqS9/mqRnz7RZwP66qo0T17glj3WvGlwcjKLVNxkUINuQxAX2tOQAdEK4x8s3rlyK4xZ0tMO6ZPpaNSodrMC/X0v5olfdHMri+Et8ONnxYyc3Qzw82PG4c73NPraSHZx/cSDRkDdr0T6wsm0/81GvWqo+rR7XQfLJ9K8e6v4nL3VuUZ7cegtCFEDDBcm5ByVjHLve+DehcRf6SvQlqjyMQEklECV/tfl0Z0b8FS8lkhvhnflvd4Tw1BrOurq0Fx2ViM+tRO/b9uyQEoycxx4749kv+fQdhjC347fUaQERvHhOJAaQs/dWTiT8mf780j9D9aOSb8b3uX0bMYJOU2ZupjPK3ROLr+m0+zlM9JZl9Jecsv19MYuOYS5eelIiCpVqMSxl92kr0riVznAY3NNMRMPcK2O+nXjZn0zBYZBzOttvD9zI7pu0t0bQdBPLQJ3pBJFl2NM9zqLPQd7qtkonYWFSEPWq0rHHJSb1zEfgor2QDYWIHD26Cye/BzmDFSeHvxSk83DrzW2GOBEHUM+zWprmgS7iAKA8GVnm4MaF8twD4LBcOJYjHd1ID5PKMkjszskXzoBOl1XdhFeXlNIv2/vvAhhOwPr5fyOxKM9RwO/ug8NH3GsHmIUfbqdZmx1WohglEEb+jPohHi9WC+vhmUvD8GhrNGQmxKV+P95VXSClDHzLGBi/c6Grc9s5QyC9k/UT12/HrkMwHbwHrsGBYiUXbP2eb7Cy1donS0d9qXPdEvHiU9qFM0AcbzC0UNR2Im8cdozXS3PMUvluwP+z+JVXEnqgijxjbbsXj+S8q1m3DHarDzCIP6U1EZqiigkWDk5Omr5mI9Y9AW4faLIhHTiLqqcHACs//8xVoz9SIh96FDARKXkb1TzWI3O5MZE+34J/J6qxU7+TAtJG2S6DNhzKlpod/+R8kdweciHOQzFdX+bfq+Eif9+keOkTN4oDZOfYBKi0eQsk7lQKoN0x74DRLmGUic1aYT8p89oyYomlvru0Sgzi60tod0L5S2sXzAxYv8DctmBevF3tt/4kxYp1agOR2uwBqNIQ9nfqWK1Ck8tezZNqZtiNFM+mXOtwuwfgQ2gOY1YlxMVM0WcuzajA96rxLwiZSuuLSQnj/43Phv3wExz2iCERQhxRhjGiv14ytJr+I68EB3YK9TKa0ReSyj0L8aHwiu252ODdFcmpTN/DkS40lReIheXnaLoPmra2E="};
+    const encryptedBundle = {"salt":"vWEG/mUsSjtkhJeYkuHSYw==","iv":"qEpZDsAV8A1R2BacSue2mw==","data":"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"};
     const publicPayloads = {
       clashRepo: "https://github.com/clash-verge-rev/clash-verge-rev",
       v2rayNRepo: "https://github.com/2dust/v2rayN",
       v2rayNGRepo: "https://github.com/2dust/v2rayNG",
-      acl4ssrRepo: "https://github.com/ACL4SSR/ACL4SSR"
+      acl4ssrRepo: "https://github.com/ACL4SSR/ACL4SSR",
+      clashDownload: "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.5.1/Clash.Verge_2.5.1_x64-setup.exe",
+      v2rayNDownload: "https://github.com/2dust/v2rayN/releases/download/7.22.7/v2rayN-windows-64.zip",
+      v2rayNGDownload: "https://github.com/2dust/v2rayNG/releases/download/2.2.5/v2rayNG_2.2.5_universal.apk"
     };
 
-    const lockedText = "已加密，输入密码后显示和复制";
-    const previewLength = 168;
+    const lockedText = "已解锁，内容可复制";
+    const previewLength = 156;
     let payloads = { ...publicPayloads };
-    let unlocked = false;
 
     async function decryptBundle(password) {
       const salt = CryptoJS.enc.Base64.parse(encryptedBundle.salt);
@@ -707,7 +857,7 @@
     function formatPreview(value) {
       if (!value) return lockedText;
       if (value.length <= previewLength) return value;
-      return value.slice(0, previewLength) + "\n...\n完整内容请点复制或展开查看";
+      return value.slice(0, previewLength) + "\n...\n点击复制可获取完整内容";
     }
 
     function setButtonState(button, text, mode = "copied") {
@@ -726,7 +876,6 @@
         await navigator.clipboard.writeText(text);
         return;
       }
-
       const helper = document.createElement("textarea");
       helper.value = text;
       helper.setAttribute("readonly", "");
@@ -744,29 +893,65 @@
       document.querySelectorAll("[data-preview]").forEach((node) => {
         node.textContent = formatPreview(payloads[node.dataset.preview]);
       });
-
       document.querySelectorAll("[data-full]").forEach((node) => {
-        node.textContent = payloads[node.dataset.full] || lockedText;
+        node.textContent = payloads[node.dataset.full] || "";
       });
-
       document.querySelectorAll("[data-open]").forEach((node) => {
         const target = payloads[node.dataset.open];
         if (target) node.setAttribute("href", target);
-        if (!target && !node.dataset.openSecret) node.setAttribute("aria-disabled", "true");
       });
+    }
+
+    function revealApp() {
+      document.body.classList.remove("locked");
+      document.getElementById("unlockScreen").classList.add("is-hidden");
+      const app = document.getElementById("app");
+      app.classList.add("is-visible");
+      app.setAttribute("aria-hidden", "false");
+    }
+
+    function lockApp() {
+      document.body.classList.add("locked");
+      document.getElementById("unlockScreen").classList.remove("is-hidden");
+      const app = document.getElementById("app");
+      app.classList.remove("is-visible");
+      app.setAttribute("aria-hidden", "true");
+      document.getElementById("passwordInput").focus();
+    }
+
+    function bindUnlock() {
+      const form = document.getElementById("unlockForm");
+      const input = document.getElementById("passwordInput");
+      const state = document.getElementById("unlockState");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        state.className = "unlock-state";
+        state.textContent = "正在解锁...";
+        try {
+          const decrypted = await decryptBundle(input.value);
+          payloads = { ...publicPayloads, ...decrypted };
+          input.value = "";
+          state.className = "unlock-state ok";
+          state.textContent = "已解锁";
+          hydrateContent();
+          revealApp();
+        } catch (error) {
+          console.error(error);
+          state.className = "unlock-state bad";
+          state.textContent = "密码不正确";
+        }
+      });
+      document.getElementById("lockAgain").addEventListener("click", lockApp);
     }
 
     function bindCopyButtons() {
       document.querySelectorAll("[data-copy]").forEach((button) => {
         button.addEventListener("click", async () => {
-          const key = button.dataset.copy;
-          const value = payloads[key];
+          const value = payloads[button.dataset.copy];
           if (!value) {
-            document.getElementById("passwordInput").focus();
             setButtonState(button, "先解锁", "locked");
             return;
           }
-
           try {
             await copyToClipboard(value);
             setButtonState(button, "已复制");
@@ -778,36 +963,9 @@
       });
     }
 
-    function bindUnlock() {
-      const form = document.getElementById("unlockForm");
-      const input = document.getElementById("passwordInput");
-      const state = document.getElementById("unlockState");
-
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        state.className = "unlock-state";
-        state.textContent = "正在解锁...";
-
-        try {
-          const decrypted = await decryptBundle(input.value);
-          payloads = { ...publicPayloads, ...decrypted };
-          unlocked = true;
-          input.value = "";
-          state.className = "unlock-state ok";
-          state.textContent = "已解锁，可以复制订阅和节点";
-          hydrateContent();
-        } catch (error) {
-          console.error(error);
-          unlocked = false;
-          state.className = "unlock-state bad";
-          state.textContent = "密码不正确";
-        }
-      });
-    }
-
     hydrateContent();
-    bindCopyButtons();
     bindUnlock();
+    bindCopyButtons();
   </script>
 </body>
 </html>
